@@ -1,6 +1,8 @@
 import React, { useState } from "react"
+import clsx from 'clsx';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox"
 import { EditIcon, TrashIcon, XIcon } from "lucide-react"
 
 interface TodoItemData  {
@@ -27,16 +29,16 @@ function TodoItem(props: TodoItemProps) {
   }
 
   return (
-    <div key={id} className="flex gap-1 w-full items-center">
+    <div key={id} className="flex gap-2 w-full items-center">
       {mode === 'view' && (
         <>
-          <input 
-            type="checkbox" 
+          <Checkbox
+            id={`checkbox-${id}`} 
             checked={isCompleted} 
-            onChange={() => toggleTodoItemComplete(id)}
+            onCheckedChange={() => toggleTodoItemComplete(id)}
           />
           <div className="flex-1">
-            {text}
+            <label className={clsx("cursor-pointer", isCompleted && "line-through")} htmlFor={`checkbox-${id}`}>{text}</label>
           </div>
           <Button variant="ghost" onClick={() => openTodoItemEditMode(id)}>
             <EditIcon />
