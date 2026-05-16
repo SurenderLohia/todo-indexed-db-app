@@ -24,7 +24,7 @@ function TodoItem(props: TodoItemProps) {
 
   const [todoItemText, setTodoItemText] = useState(text);
 
-  const onTodoItemTextChange = (e: any) => {
+  const onTodoItemTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTodoItemText(e.target.value);
   }
 
