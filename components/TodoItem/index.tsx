@@ -29,7 +29,7 @@ function TodoItem(props: TodoItemProps) {
   }
 
   return (
-    <div key={id} className="flex gap-2 w-full items-center">
+    <div className="flex gap-2 w-full items-center border-b px-2 py-1">
       {mode === 'view' && (
         <>
           <Checkbox

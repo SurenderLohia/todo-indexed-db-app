@@ -83,24 +83,26 @@ function TodoList() {
         <Button type="submit" variant="secondary">Add</Button>
       </form>
       <div className="flex gap-3">
-        <Button size="sm" variant="outline">{allCount} All</Button>
-        <Button size="sm" variant="outline">{pendingCount} Pending</Button>
-        <Button size="sm" variant="outline">{completedCount} Completed</Button>
+        <Button size="sm" variant="outline">All({allCount})</Button>
+        <Button size="sm" variant="outline">Pending({pendingCount})</Button>
+        <Button size="sm" variant="outline">Completed({completedCount})</Button>
       </div>
-      {todos.map((todo) => (
-        <TodoItem 
-          key={todo.id} 
-          id={todo.id} 
-          text={todo.text}
-          isCompleted={todo.isCompleted}
-          toggleTodoItemComplete={toggleTodoItemComplete}
-          mode={todo.mode}
-          openTodoItemEditMode={openTodoItemEditMode}
-          updateTodoItemText={updateTodoItemText}
-          closeTodoItemEditMode={closeTodoItemEditMode}
-          deleteTodoItem={deleteTodoItem}
-        />
-      ))}
+      <div className="flex flex-col gap-1">
+        {todos.map((todo) => (
+          <TodoItem 
+            key={todo.id} 
+            id={todo.id} 
+            text={todo.text}
+            isCompleted={todo.isCompleted}
+            toggleTodoItemComplete={toggleTodoItemComplete}
+            mode={todo.mode}
+            openTodoItemEditMode={openTodoItemEditMode}
+            updateTodoItemText={updateTodoItemText}
+            closeTodoItemEditMode={closeTodoItemEditMode}
+            deleteTodoItem={deleteTodoItem}
+          />
+        ))}
+      </div>
     </div>
   );
 }
