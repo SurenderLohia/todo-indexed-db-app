@@ -14,10 +14,11 @@ interface TodoItemProps extends TodoItemData {
   openTodoItemEditMode: (id: string) => void,
   closeTodoItemEditMode: (id: string) => void,
   updateTodoItemText: (id: string, newText: string) => void,
+  deleteTodoItem: (id: string) => void,
 }
 
 function TodoItem(props: TodoItemProps) {
-  const {id, text, isCompleted, toggleTodoItemComplete, openTodoItemEditMode, closeTodoItemEditMode, updateTodoItemText, mode = 'view'} = props;
+  const {id, text, isCompleted, toggleTodoItemComplete, openTodoItemEditMode, closeTodoItemEditMode, updateTodoItemText, deleteTodoItem, mode = 'view'} = props;
 
   const [todoItemText, setTodoItemText] = useState(text);
 
@@ -40,7 +41,7 @@ function TodoItem(props: TodoItemProps) {
           <Button variant="ghost" onClick={() => openTodoItemEditMode(id)}>
             <EditIcon />
           </Button>
-          <Button variant="ghost">
+          <Button variant="ghost" onClick={() => deleteTodoItem(id)}>
             <TrashIcon />
           </Button>
           </>

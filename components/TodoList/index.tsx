@@ -67,6 +67,11 @@ function TodoList() {
     }));
   }
 
+  const deleteTodoItem = (id: string) => {
+    const updatedTodos = todos.filter(todo => todo.id !== id);
+    setTodos(updatedTodos);
+  }
+
   return (
     <>
       <form className="flex gap-1 w-full my-4" onSubmit={handleAddTodo}>
@@ -84,6 +89,7 @@ function TodoList() {
           openTodoItemEditMode={openTodoItemEditMode}
           updateTodoItemText={updateTodoItemText}
           closeTodoItemEditMode={closeTodoItemEditMode}
+          deleteTodoItem={deleteTodoItem}
         />
       ))}
     </>
