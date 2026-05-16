@@ -9,8 +9,8 @@ export default function Home() {
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center py-8 px-16 bg-white dark:bg-black sm:items-start">
         <h1 className="text-3xl font-bold text-center sm:text-left">Todo</h1>
         <div className="flex gap-1 w-full mt-4">
-          <Input />
-          <Button>Add</Button>
+          <Input id="add-task" placeholder="Add todo item" />
+          <Button className variant="secondary">Add</Button>
         </div>
       </main>
     </div>
