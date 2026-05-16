@@ -13,7 +13,7 @@ function TodoList() {
   const [newTodo, setNewTodo] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<"all" | "pending" | "completed">("all");
 
-  const handleAddTodo = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleAddTodo = (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTodo.trim() === "") return;
 

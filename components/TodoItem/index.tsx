@@ -1,9 +1,9 @@
 import React, { useState } from "react"
-import clsx from 'clsx';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox"
 import { EditIcon, TrashIcon, XIcon } from "lucide-react"
+import { cn } from "@/lib/utils";
 
 interface TodoItemData  {
   text: string,
@@ -28,37 +28,69 @@ function TodoItem(props: TodoItemProps) {
     setTodoItemText(e.target.value);
   }
 
+  const handleCloseEditMode = (id: string) => {
+    closeTodoItemEditMode(id);
+    setTodoItemText(text);
+  }
+
+  const handleEditSave = (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    updateTodoItemText(id, todoItemText);
+  }
+
   return (
-    <div className="flex gap-2 w-full items-center border-b px-2 py-1">
+    <div>
       {mode === 'view' && (
-        <>
+        <div className="flex gap-2 w-full items-center border-b px-2 py-1">
           <Checkbox
-            id={`checkbox-${id}`} 
+            id={`checkbox-${id}`}
             checked={isCompleted} 
             onCheckedChange={() => toggleTodoItemComplete(id)}
           />
           <div className="flex-1">
-            <label className={clsx("cursor-pointer", isCompleted && "line-through")} htmlFor={`checkbox-${id}`}>{text}</label>
+            <label
+              className={cn("cursor-pointer", isCompleted && "line-through")}
+              htmlFor={`checkbox-${id}`}>{text}
+            </label>
           </div>
-          <Button variant="ghost" onClick={() => openTodoItemEditMode(id)}>
-            <EditIcon />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => openTodoItemEditMode(id)}
+          >
+            <EditIcon className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" onClick={() => deleteTodoItem(id)}>
-            <TrashIcon />
+          <Button 
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => deleteTodoItem(id)}
+          >
+            <TrashIcon className="h-4 w-4" />
           </Button>
-          </>
+          </div>
         )
       }
       {mode === 'edit' && (
-        <>
-          <Input type="text" value={todoItemText} className="flex-1" onChange={onTodoItemTextChange} />
-          <Button variant="ghost" onClick={() => updateTodoItemText(id, todoItemText)}>
+        <form 
+          className="flex gap-2 w-full items-center border-b px-2 py-1"
+          onSubmit={handleEditSave}
+        >
+          <Input
+            type="text"
+            value={todoItemText}
+            className="flex-1"
+            onChange={onTodoItemTextChange}
+            autoFocus
+          />
+          <Button variant="ghost" type="submit">
             Save
           </Button>
-          <Button variant="ghost" onClick={() => closeTodoItemEditMode(id)}>
-            <XIcon />
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCloseEditMode(id)}>
+            <XIcon className="h-4 w-4" />
           </Button>
-        </>
+        </form>
       )}
     </div>
   );
