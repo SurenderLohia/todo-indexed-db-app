@@ -72,12 +72,21 @@ function TodoList() {
     setTodos(updatedTodos);
   }
 
+  const allCount = todos.length;
+  const pendingCount = todos.filter(todo => !todo.isCompleted).length;
+  const completedCount = todos.filter(todo => todo.isCompleted).length;
+
   return (
-    <>
-      <form className="flex gap-1 w-full my-4" onSubmit={handleAddTodo}>
+    <div className="flex flex-col w-full gap-4">
+      <form className="flex gap-1 w-full" onSubmit={handleAddTodo}>
         <Input type="text" id="add-task" placeholder="Add todo item" value={newTodo} onChange={onAddTodoChange} />
         <Button type="submit" variant="secondary">Add</Button>
       </form>
+      <div className="flex gap-3">
+        <Button size="sm" variant="outline">{allCount} All</Button>
+        <Button size="sm" variant="outline">{pendingCount} Pending</Button>
+        <Button size="sm" variant="outline">{completedCount} Completed</Button>
+      </div>
       {todos.map((todo) => (
         <TodoItem 
           key={todo.id} 
@@ -92,7 +101,7 @@ function TodoList() {
           deleteTodoItem={deleteTodoItem}
         />
       ))}
-    </>
+    </div>
   );
 }
 
