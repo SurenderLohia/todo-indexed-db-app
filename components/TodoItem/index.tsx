@@ -8,15 +8,15 @@ import { cn } from "@/lib/utils";
 interface TodoItemData  {
   text: string,
   isCompleted: boolean,
-  id: string,
-  mode?: 'view' | 'edit',
+  id: number,
+  mode: 'view' | 'edit',
 }
 interface TodoItemProps extends TodoItemData {
-  toggleTodoItemComplete: (id: string) => void,
-  openTodoItemEditMode: (id: string) => void,
-  closeTodoItemEditMode: (id: string) => void,
-  updateTodoItemText: (id: string, newText: string) => void,
-  deleteTodoItem: (id: string) => void,
+  toggleTodoItemComplete: (id: number) => void,
+  openTodoItemEditMode: (id: number) => void,
+  closeTodoItemEditMode: () => void,
+  updateTodoItemText: (id: number, newText: string) => void,
+  deleteTodoItem: (id: number) => void,
 }
 
 function TodoItem(props: TodoItemProps) {
@@ -28,8 +28,8 @@ function TodoItem(props: TodoItemProps) {
     setTodoItemText(e.target.value);
   }
 
-  const handleCloseEditMode = (id: string) => {
-    closeTodoItemEditMode(id);
+  const handleCloseEditMode = () => {
+    closeTodoItemEditMode();
     setTodoItemText(text);
   }
 
@@ -87,7 +87,7 @@ function TodoItem(props: TodoItemProps) {
           <Button variant="ghost" type="submit">
             Save
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCloseEditMode(id)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCloseEditMode}>
             <XIcon className="h-4 w-4" />
           </Button>
         </form>

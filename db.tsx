@@ -1,7 +1,7 @@
 import { Dexie, type EntityTable } from "dexie";
 
 interface TodoItemTypes  {
-  id: string,
+  id: number,
   text: string,
   isCompleted: boolean,
 }

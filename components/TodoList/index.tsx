@@ -16,12 +16,11 @@ interface AddTodoToDB {
 }
 
 function TodoList() {
-  //const [todos, setTodos] = useState<TodoItemData[]>([]);
   const [newTodo, setNewTodo] = useState("");
+  const [editItemId, setEditItemId] = useState<number>(0);
   const [selectedFilter, setSelectedFilter] = useState<"all" | "pending" | "completed">("all");
 
   const todos = useLiveQuery(() => db.todos.toArray(), []) || [];
-
   const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
@@ -62,48 +61,33 @@ function TodoList() {
     setNewTodo(e.target.value);
   }
 
-  const toggleTodoItemComplete = (id: string) => {
-    // setTodos(todos.map((todo) => {
-    //   if (todo.id === id) {
-    //     return { ...todo, isCompleted: !todo.isCompleted };
-    //   }
-    //   return todo;
-    // }));
+  const toggleTodoItemComplete = (id: number) => {
+    db.todos.update(id, (todo) => { 
+      if (todo) {
+        todo.isCompleted = !todo.isCompleted;
+      }
+    });
   }
 
-  const openTodoItemEditMode = (id: string) => {
-    // // setTodos(todos.map((todo) => {
-    //   if (todo.id === id) {
-    //     return { ...todo, mode: 'edit' };
-    //   }
-    //   return {
-    //     ...todo,
-    //     mode: 'view',
-    //   };
-    // }));
+  const openTodoItemEditMode = (id: number) => {
+    setEditItemId(id);
   }
 
-  const closeTodoItemEditMode = (id: string) => {
-    // setTodos(todos.map((todo) => {
-    //   if (todo.id === id) {
-    //     return { ...todo, mode: 'view' };
-    //   }
-    //   return todo;
-    // }));
+  const closeTodoItemEditMode = () => {
+    setEditItemId(0);
   }
 
-  const updateTodoItemText = (id: string, newText: string) => {
-    // setTodos(todos.map((todo) => {
-    //   if (todo.id === id) {
-    //     return { ...todo, text: newText, mode: 'view' };
-    //   }
-    //   return todo;
-    // }));
+  const updateTodoItemText = (id: number, newText: string) => {
+    db.todos.update(id, (todo) => {
+      if (todo) {
+        todo.text = newText;
+      }
+    });
+     setEditItemId(0);
   }
 
-  const deleteTodoItem = (id: string) => {
-    // const updatedTodos = todos.filter(todo => todo.id !== id);
-    // setTodos(updatedTodos);
+  const deleteTodoItem = (id: number) => {
+    db.todos.delete(id);
   }
 
   // const allCount = todos.length;
@@ -146,7 +130,7 @@ function TodoList() {
             text={todo.text}
             isCompleted={todo.isCompleted}
             toggleTodoItemComplete={toggleTodoItemComplete}
-            mode="view"
+            mode={editItemId === todo.id ? 'edit' : 'view'}
             openTodoItemEditMode={openTodoItemEditMode}
             updateTodoItemText={updateTodoItemText}
             closeTodoItemEditMode={closeTodoItemEditMode}
