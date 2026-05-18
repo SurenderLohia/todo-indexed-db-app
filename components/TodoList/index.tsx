@@ -11,12 +11,12 @@ import { db } from "@/db";
 
 interface AddTodoToDB {
   text: string,
-  isCompleted: boolean,
+  isCompleted: number,
 }
 
 function TodoList() {
   const [newTodo, setNewTodo] = useState("");
-  const [editItemId, setEditItemId] = useState<number>(0);
+  const [editItemId, setEditItemId] = useState<number | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<"all" | "pending" | "completed">("all");
 
   const todos = useLiveQuery(() => db.todos.toArray(), []) || [];
@@ -36,11 +36,12 @@ function TodoList() {
 
   const handleAddTodo = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newTodo.trim() === "") return;
+    const cleanText = newTodo.trim();
+    if (!cleanText) return;
 
     const todoItem = {
-      text: newTodo,
-      isCompleted: false,
+      text: cleanText,
+      isCompleted: 0,
     }
 
     addTodoToDB(todoItem);
@@ -51,12 +52,10 @@ function TodoList() {
     setNewTodo(e.target.value);
   }
 
-  const toggleTodoItemComplete = (id: number) => {
-    db.todos.update(id, (todo) => { 
-      if (todo) {
-        todo.isCompleted = !todo.isCompleted;
-      }
-    });
+  const toggleTodoItemComplete = async (id: number) => {
+    const todo = await db.todos.get(id);
+    if(!todo) return;
+    db.todos.update(id, { isCompleted: todo.isCompleted === 1 ? 0 : 1 });
   }
 
   const openTodoItemEditMode = (id: number) => {
@@ -64,37 +63,27 @@ function TodoList() {
   }
 
   const closeTodoItemEditMode = () => {
-    setEditItemId(0);
+    setEditItemId(null);
   }
 
   const updateTodoItemText = (id: number, newText: string) => {
-    db.todos.update(id, (todo) => {
-      if (todo) {
-        todo.text = newText;
-      }
-    });
-     setEditItemId(0);
+    db.todos.update(id, { text: newText });
+    setEditItemId(null);
   }
 
   const deleteTodoItem = (id: number) => {
     db.todos.delete(id);
   }
 
-  const pendingTodos = useLiveQuery(() => db.todos.filter(todo => !todo.isCompleted).toArray(), []);
-  const completedTodos = useLiveQuery(() => db.todos.filter(todo => todo.isCompleted).toArray(), []);
+  const pendingTodos = todos.filter((todo) => todo.isCompleted === 0);
+  const completedTodos = todos.filter((todo) => todo.isCompleted === 1);
 
   if (!isMounted) return null;
 
-  const currentTodos = () => {
-    switch (selectedFilter) {
-      case "pending":
-        return pendingTodos
-      case "completed":
-        return completedTodos
-      default:
-        return todos;
-      }
-  }
+  const displayedTodos = 
+    selectedFilter === "pending" ? pendingTodos : 
+    selectedFilter === "completed" ? completedTodos : 
+    todos;
   
   return (
     <div className="flex flex-col w-full gap-4">
@@ -114,10 +103,10 @@ function TodoList() {
         </Button>
       </div>
       <div className="flex flex-col gap-1">
-        {currentTodos()?.map((todo) => (
+        {displayedTodos.map((todo) => (
           <TodoItem 
-            key={todo.id} 
-            id={todo.id} 
+            key={`${todo.id}-${editItemId === todo.id ? 'edit' : 'view'}`}
+            id={todo.id as number} 
             text={todo.text}
             isCompleted={todo.isCompleted}
             toggleTodoItemComplete={toggleTodoItemComplete}

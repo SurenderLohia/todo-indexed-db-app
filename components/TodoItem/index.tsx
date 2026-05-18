@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils";
 
 interface TodoItemData  {
   text: string,
-  isCompleted: boolean,
+  isCompleted: number,
   id: number,
   mode: 'view' | 'edit',
 }
 interface TodoItemProps extends TodoItemData {
   toggleTodoItemComplete: (id: number) => void,
   openTodoItemEditMode: (id: number) => void,
-  closeTodoItemEditMode: () => void,
+  closeTodoItemEditMode: (id: number) => void,
   updateTodoItemText: (id: number, newText: string) => void,
   deleteTodoItem: (id: number) => void,
 }
@@ -28,14 +28,16 @@ function TodoItem(props: TodoItemProps) {
     setTodoItemText(e.target.value);
   }
 
-  const handleCloseEditMode = () => {
-    closeTodoItemEditMode();
+  const handleCloseEditMode = (id: number) => {
+    closeTodoItemEditMode(id);
     setTodoItemText(text);
   }
 
   const handleEditSave = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateTodoItemText(id, todoItemText);
+    const trimmedText = todoItemText.trim();
+    if (!trimmedText) return;
+    updateTodoItemText(id, trimmedText);
   }
 
   return (
@@ -44,12 +46,12 @@ function TodoItem(props: TodoItemProps) {
         <div className="flex gap-2 w-full items-center border-b px-2 py-1">
           <Checkbox
             id={`checkbox-${id}`}
-            checked={isCompleted} 
+            checked={isCompleted === 1} 
             onCheckedChange={() => toggleTodoItemComplete(id)}
           />
           <div className="flex-1">
             <label
-              className={cn("cursor-pointer", isCompleted && "line-through")}
+              className={cn("cursor-pointer", isCompleted === 1 && "line-through")}
               htmlFor={`checkbox-${id}`}>{text}
             </label>
           </div>
@@ -87,7 +89,7 @@ function TodoItem(props: TodoItemProps) {
           <Button variant="ghost" type="submit">
             Save
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleCloseEditMode}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleCloseEditMode(id)} type="button">
             <XIcon className="h-4 w-4" />
           </Button>
         </form>

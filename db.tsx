@@ -1,9 +1,9 @@
 import { Dexie, type EntityTable } from "dexie";
 
 interface TodoItemTypes  {
-  id: number,
+  id?: number,
   text: string,
-  isCompleted: boolean,
+  isCompleted: number,
 }
 
 const db = new Dexie("TodoDatabase") as Dexie & {
@@ -11,8 +11,8 @@ const db = new Dexie("TodoDatabase") as Dexie & {
 }
 
 // Schema declaration:
-db.version(1).stores({
-  todos: "++id, text, isCompleted"
+db.version(2).stores({
+  todos: "++id, isCompleted"
 });
 
 export type { TodoItemTypes }
