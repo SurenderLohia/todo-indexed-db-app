@@ -96,6 +96,7 @@ function TodoList() {
 
   // const filteredTodos = todos.filter(todo => {
   //   if (selectedFilter === "pending") {
+  //     const todos
   //     return !todo.isCompleted;
   //   } else if (selectedFilter === "completed") {
   //     return todo.isCompleted;
@@ -103,7 +104,19 @@ function TodoList() {
   //   return true;
   // });
 
+  const pendingTodos = useLiveQuery(() => db.todos.filter(todo => !todo.isCompleted).toArray(), []);
+  const completedTodos = useLiveQuery(() => db.todos.filter(todo => todo.isCompleted).toArray(), []);
+
   if (!isMounted) return null;
+
+  const currentTodos = () => {
+    if (selectedFilter === "pending") {
+      return pendingTodos || [];
+    } else if (selectedFilter === "completed") {
+      return completedTodos || [];
+    }
+    return todos;
+  }
   
   return (
     <div className="flex flex-col w-full gap-4">
@@ -111,19 +124,19 @@ function TodoList() {
         <Input type="text" id="add-task" placeholder="Add todo item" value={newTodo} onChange={onAddTodoChange} />
         <Button type="submit" variant="secondary">Add</Button>
       </form>
-      {/* <div className="flex gap-3">
+      <div className="flex gap-3">
         <Button size="sm" variant={selectedFilter === "all" ? "default" : "outline"} onClick={() => setSelectedFilter("all")}>
-          All({allCount})
+          All({todos.length})
         </Button>
         <Button size="sm" variant={selectedFilter === "pending" ? "default" : "outline"} onClick={() => setSelectedFilter("pending")}>
-          Pending({pendingCount})
+          Pending({pendingTodos?.length || 0})
         </Button>
         <Button size="sm" variant={selectedFilter === "completed" ? "default" : "outline"} onClick={() => setSelectedFilter("completed")}>
-          Completed({completedCount})
+          Completed({completedTodos?.length || 0})
         </Button>
-      </div> */}
+      </div>
       <div className="flex flex-col gap-1">
-        {todos.map((todo) => (
+        {currentTodos().map((todo) => (
           <TodoItem 
             key={todo.id} 
             id={todo.id} 
