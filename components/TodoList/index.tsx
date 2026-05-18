@@ -80,10 +80,13 @@ function TodoList() {
 
   if (!isMounted) return null;
 
-  const displayedTodos = 
-    selectedFilter === "pending" ? pendingTodos : 
-    selectedFilter === "completed" ? completedTodos : 
-    todos;
+  const filterMap = {
+    all: todos,
+    pending: pendingTodos,
+    completed: completedTodos,
+  };
+
+  const displayedTodos = filterMap[selectedFilter];
   
   return (
     <div className="flex flex-col w-full gap-4">
@@ -96,10 +99,10 @@ function TodoList() {
           All({todos.length})
         </Button>
         <Button size="sm" variant={selectedFilter === "pending" ? "default" : "outline"} onClick={() => setSelectedFilter("pending")}>
-          Pending({pendingTodos?.length || 0})
+          Pending({pendingTodos.length})
         </Button>
         <Button size="sm" variant={selectedFilter === "completed" ? "default" : "outline"} onClick={() => setSelectedFilter("completed")}>
-          Completed({completedTodos?.length || 0})
+          Completed({completedTodos.length})
         </Button>
       </div>
       <div className="flex flex-col gap-1">
