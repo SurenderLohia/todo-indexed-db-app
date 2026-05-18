@@ -1,14 +1,13 @@
 "use client"
 
 import React, { useState, useEffect }  from "react"
-import { v4 as uuidv4 } from 'uuid';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { TodoItem, TodoItemData } from "@/components/TodoItem";
-import { db, TodoItemTypes } from "@/db";
+import { TodoItem } from "@/components/TodoItem";
+import { db } from "@/db";
 
 interface AddTodoToDB {
   text: string,
@@ -39,21 +38,12 @@ function TodoList() {
     e.preventDefault();
     if (newTodo.trim() === "") return;
 
-    // const newTodoItem: TodoItemData = {
-    //   id: uuidv4(),
-    //   text: newTodo,
-    //   isCompleted: false,
-    //   mode: 'view',
-    // };
-
     const todoItem = {
       text: newTodo,
       isCompleted: false,
     }
 
     addTodoToDB(todoItem);
-
-    //setTodos([...todos, newTodoItem]);
     setNewTodo("");
   }
 
@@ -90,32 +80,20 @@ function TodoList() {
     db.todos.delete(id);
   }
 
-  // const allCount = todos.length;
-  // const pendingCount = todos.filter(todo => !todo.isCompleted).length;
-  // const completedCount = todos.filter(todo => todo.isCompleted).length;
-
-  // const filteredTodos = todos.filter(todo => {
-  //   if (selectedFilter === "pending") {
-  //     const todos
-  //     return !todo.isCompleted;
-  //   } else if (selectedFilter === "completed") {
-  //     return todo.isCompleted;
-  //   }
-  //   return true;
-  // });
-
   const pendingTodos = useLiveQuery(() => db.todos.filter(todo => !todo.isCompleted).toArray(), []);
   const completedTodos = useLiveQuery(() => db.todos.filter(todo => todo.isCompleted).toArray(), []);
 
   if (!isMounted) return null;
 
   const currentTodos = () => {
-    if (selectedFilter === "pending") {
-      return pendingTodos || [];
-    } else if (selectedFilter === "completed") {
-      return completedTodos || [];
-    }
-    return todos;
+    switch (selectedFilter) {
+      case "pending":
+        return pendingTodos
+      case "completed":
+        return completedTodos
+      default:
+        return todos;
+      }
   }
   
   return (
@@ -136,7 +114,7 @@ function TodoList() {
         </Button>
       </div>
       <div className="flex flex-col gap-1">
-        {currentTodos().map((todo) => (
+        {currentTodos()?.map((todo) => (
           <TodoItem 
             key={todo.id} 
             id={todo.id} 
